@@ -2,87 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Harga Semasa Live</title>
+  <title>XAUUSD Live Price</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f3f4f6;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 50px;
-    }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    select {
-      padding: 8px 12px;
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    #live-price {
-      font-size: 48px;
-      font-weight: bold;
-      color: #2563eb;
-    }
-
-    small {
-      margin-top: 10px;
-      color: #888;
-    }
+    body { font-family: Arial, sans-serif; text-align: center; padding: 2rem; }
+    #live-price { font-size: 2rem; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <h1>Harga Semasa</h1>
-  <select id="symbol-select">
-    <option value="OANDA:XAUUSD">XAU/USD (Gold)</option>
-    <option value="OANDA:BTCUSD">BTC/USD (Bitcoin)</option>
-    <option value="OANDA:WTICOUSD">WTI Crude Oil</option>
-    <option value="OANDA:EURUSD">EUR/USD</option>
-    <option value="OANDA:USDJPY">USD/JPY</option>
-  </select>
-
+  <h1>💰 Harga Semasa XAU/USD</h1>
   <div id="live-price">Loading...</div>
-  <small>Kemas kini setiap 10 saat dari TradingView</small>
+  <div id="tv-widget"></div>
 
-  <script>
-    const priceEl = document.getElementById("live-price");
-    const symbolSelect = document.getElementById("symbol-select");
+  <script type="text/javascript">
+    new TradingView.MediumWidget({
+      "symbols": [["XAUUSD", "OANDA:XAUUSD"]],
+      "chartOnly": false,
+      "width": "100%",
+      "height": "220",
+      "locale": "en",
+      "colorTheme": "light",
+      "isTransparent": false,
+      "autosize": true,
+      "container_id": "tv-widget"
+    });
 
-    async function fetchPrice(symbol) {
+    // Auto fetch price from TradingView site API
+    async function updatePrice() {
       try {
-        const proxyUrl = "https://corsproxy.io/?";
-        const url = `${proxyUrl}https://api.tradingview.com/quote-short/?symbols=${symbol}`;
-        const res = await fetch(url);
-        const json = await res.json();
-        const price = json.data[symbol]?.last;
-
+        const res = await fetch("https://symbol-search.tradingview.com/symbol_search/?text=XAUUSD");
+        const data = await res.json();
+        const price = data[0]?.last_price;
         if (price) {
-          priceEl.textContent = price.toFixed(2);
+          document.getElementById("live-price").innerText = `$${price}`;
         } else {
-          priceEl.textContent = "Unavailable";
+          document.getElementById("live-price").innerText = "❌ Gagal dapat harga";
         }
-      } catch (err) {
-        priceEl.textContent = "❌ Error";
-        console.error("Gagal ambil harga:", err);
+      } catch (e) {
+        document.getElementById("live-price").innerText = "❌ Error";
       }
     }
 
-    function updateLoop() {
-      const symbol = symbolSelect.value;
-      fetchPrice(symbol);
-    }
-
-    symbolSelect.addEventListener("change", updateLoop);
-
-    // Mula loop setiap 10 saat
-    updateLoop();
-    setInterval(updateLoop, 10000);
+    updatePrice();
+    setInterval(updatePrice, 10000); // setiap 10 saat
   </script>
 </body>
 </html>
