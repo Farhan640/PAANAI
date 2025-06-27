@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Harga XAU/USD Live</title>
+  <title>Harga Semasa Live</title>
   <style>
     body {
       font-family: sans-serif;
@@ -16,45 +16,73 @@
 
     h1 {
       font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    select {
+      padding: 8px 12px;
+      font-size: 16px;
       margin-bottom: 20px;
     }
 
-    #xau-price {
+    #live-price {
       font-size: 48px;
       font-weight: bold;
-      color: #16a34a;
+      color: #2563eb;
     }
 
     small {
-      color: gray;
       margin-top: 10px;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <h1>Harga Semasa XAU/USD</h1>
-  <div id="xau-price">Loading...</div>
+  <h1>Harga Semasa</h1>
+  <select id="symbol-select">
+    <option value="OANDA:XAUUSD">XAU/USD (Gold)</option>
+    <option value="OANDA:BTCUSD">BTC/USD (Bitcoin)</option>
+    <option value="OANDA:WTICOUSD">WTI Crude Oil</option>
+    <option value="OANDA:EURUSD">EUR/USD</option>
+    <option value="OANDA:USDJPY">USD/JPY</option>
+  </select>
+
+  <div id="live-price">Loading...</div>
   <small>Kemas kini setiap 10 saat dari TradingView</small>
 
   <script>
-    async function updatePrice() {
+    const priceEl = document.getElementById("live-price");
+    const symbolSelect = document.getElementById("symbol-select");
+
+    async function fetchPrice(symbol) {
       try {
-        const res = await fetch("https://corsproxy.io/?https://api.tradingview.com/quote-short/?symbols=OANDA:XAUUSD");
-        const data = await res.json();
-        const price = data["data"]["OANDA:XAUUSD"]["last"];
+        const proxyUrl = "https://corsproxy.io/?";
+        const url = `${proxyUrl}https://api.tradingview.com/quote-short/?symbols=${symbol}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        const price = json.data[symbol]?.last;
+
         if (price) {
-          document.getElementById("xau-price").textContent = price.toFixed(2);
+          priceEl.textContent = price.toFixed(2);
         } else {
-          document.getElementById("xau-price").textContent = "Unavailable";
+          priceEl.textContent = "Unavailable";
         }
       } catch (err) {
-        document.getElementById("xau-price").textContent = "Error";
-        console.error("Gagal ambil harga XAU/USD:", err);
+        priceEl.textContent = "❌ Error";
+        console.error("Gagal ambil harga:", err);
       }
     }
 
-    updatePrice(); // pertama kali load
-    setInterval(updatePrice, 10000); // setiap 10 saat
+    function updateLoop() {
+      const symbol = symbolSelect.value;
+      fetchPrice(symbol);
+    }
+
+    symbolSelect.addEventListener("change", updateLoop);
+
+    // Mula loop setiap 10 saat
+    updateLoop();
+    setInterval(updateLoop, 10000);
   </script>
 </body>
 </html>
