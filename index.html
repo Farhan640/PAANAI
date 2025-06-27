@@ -1,41 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Live XAU/USD Price</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Harga XAU/USD Live</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-      background: #f9f9f9;
+      font-family: sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
     }
+
     h1 {
-      color: #333;
+      font-size: 28px;
+      margin-bottom: 20px;
     }
+
     #xau-price {
       font-size: 48px;
       font-weight: bold;
-      color: #d4af37;
-      margin-top: 20px;
+      color: #16a34a;
+    }
+
+    small {
+      color: gray;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h1>Harga XAU/USD Semasa</h1>
+  <h1>Harga Semasa XAU/USD</h1>
   <div id="xau-price">Loading...</div>
+  <small>Kemas kini setiap 10 saat dari TradingView</small>
 
   <script>
     async function updatePrice() {
-      // Simulasi harga rawak
-      const simulatedPrice = (2340 + Math.random() * 20).toFixed(2);
-      document.getElementById("xau-price").innerText = simulatedPrice;
+      try {
+        const res = await fetch("https://corsproxy.io/?https://api.tradingview.com/quote-short/?symbols=OANDA:XAUUSD");
+        const data = await res.json();
+        const price = data["data"]["OANDA:XAUUSD"]["last"];
+        if (price) {
+          document.getElementById("xau-price").textContent = price.toFixed(2);
+        } else {
+          document.getElementById("xau-price").textContent = "Unavailable";
+        }
+      } catch (err) {
+        document.getElementById("xau-price").textContent = "Error";
+        console.error("Gagal ambil harga XAU/USD:", err);
+      }
     }
 
-    // Ubah setiap 3 saat
-    updatePrice();
-    setInterval(updatePrice, 3000);
+    updatePrice(); // pertama kali load
+    setInterval(updatePrice, 10000); // setiap 10 saat
   </script>
 </body>
 </html>
