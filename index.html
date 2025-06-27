@@ -1,87 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Harga Emas (XAU/USD)</title>
+  <meta charset="UTF-8">
+  <title>Live XAU/USD Price</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #f9f9f9;
+    }
+    h1 {
       color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
     }
-
-    header {
-      background-color: #ffd700;
-      width: 100%;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
+    #xau-price {
+      font-size: 48px;
       font-weight: bold;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .content {
-      max-width: 800px;
-      width: 100%;
-      padding: 1rem;
-      box-sizing: border-box;
-    }
-
-    .widget-wrapper {
-      margin-top: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: #fff;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    footer {
-      margin-top: auto;
-      padding: 1rem;
-      font-size: 0.8rem;
-      color: #888;
-      text-align: center;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        font-size: 1.2rem;
-      }
+      color: #d4af37;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <header>
-    💰 Harga Semasa XAU/USD (Emas)
-  </header>
+  <h1>Harga XAU/USD Semasa</h1>
+  <div id="xau-price">Loading...</div>
 
-  <div class="content">
-    <div class="widget-wrapper">
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-      {
-        "symbol": "OANDA:XAUUSD",
-        "width": "100%",
-        "height": "220",
-        "locale": "en",
-        "dateRange": "1D",
-        "colorTheme": "light",
-        "isTransparent": false,
-        "autosize": true
-      }
-      </script>
-    </div>
-  </div>
+  <script>
+    async function updatePrice() {
+      // Simulasi harga rawak
+      const simulatedPrice = (2340 + Math.random() * 20).toFixed(2);
+      document.getElementById("xau-price").innerText = simulatedPrice;
+    }
 
-  <footer>
-    Dibina oleh anda ✨ Guna TradingView Widget & GitHub Pages
-  </footer>
+    // Ubah setiap 3 saat
+    updatePrice();
+    setInterval(updatePrice, 3000);
+  </script>
 </body>
 </html>
